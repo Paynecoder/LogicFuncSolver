@@ -3,7 +3,7 @@
 body {
   margin: 0;
   box-sizing: border-box;
-  font-family: "Fira Code";
+  font-family: "Fira Mono", monospace;
   background-color: #f8f9fa;
   color: #000;
   transition: background-color 0.3s, color 0.3s;
@@ -53,7 +53,7 @@ body {
 }
 
 #function {
-  font-family: "Fira Code";
+  font-family: "Fira Mono", monospace;
   padding: 1rem 1rem;
   border-radius: 5px;
   font-size: 18px;
@@ -140,7 +140,6 @@ td {
 
 @media only screen and (max-width: 768px) {
   .wrapper {
-    margin: 1rem;
     gap: 1rem;
   }
 
@@ -156,12 +155,12 @@ td {
 
   .header-format {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
     align-items: center;
   }
 
   #function {
-    width: 100%;
+    width: 75%;
     font-size: 14px;
     padding: 0.75rem 1rem;
   }
