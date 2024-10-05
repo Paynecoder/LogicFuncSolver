@@ -7,4 +7,4 @@
 - Displays minterms and maxterms.
 - Generates K-Maps for functions of 2-4 unique variables.
 
-[Live](https://paynecoder.github.io/LogicFuncSolver/)
+[Live](https://www.logicfunctionsolver.org)
