@@ -94,8 +94,15 @@ body {
 }
 
 .footer {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
   margin-top: auto;
   padding: 1rem;
+}
+
+.footer a {
+  color: inherit;
 }
 
 table {
