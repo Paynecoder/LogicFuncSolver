@@ -1,4 +1,4 @@
-function buildTable() {
+const buildTable = () => {
   const placeholder = document.getElementById("table-placeholder");
   const mintermHTML = document.getElementById("minterms");
   const maxtermHTML = document.getElementById("maxterms");
@@ -34,17 +34,17 @@ function buildTable() {
   mintermHTML.innerHTML = getMintermHTML(minTerms);
   maxtermHTML.innerHTML = getMaxtermHTML(maxTerms);
   kmapPlaceholder.innerHTML = generateKMap(minTerms, variables);
-}
+};
 
-function clearResults(placeholder, mintermHTML, maxtermHTML) {
+const clearResults = (placeholder, mintermHTML, maxtermHTML) => {
   placeholder.innerHTML = "<div></div>";
   mintermHTML.innerHTML = "";
   maxtermHTML.innerHTML = "";
   const kmapPlaceholder = document.getElementById("kmap-placeholder");
   if (kmapPlaceholder) kmapPlaceholder.innerHTML = "";
-}
+};
 
-function isValidExpression(expression) {
+const isValidExpression = (expression) => {
   const hasInvalidCharacters = /[^A-Z01+'()^ ]/.test(expression);
   const hasUnmatchedParentheses =
     (expression.match(/\(/g) || []).length !==
@@ -55,9 +55,9 @@ function isValidExpression(expression) {
     hasUnmatchedParentheses ||
     hasEmptyParentheses
   );
-}
+};
 
-function generateTable(expression, variables) {
+const generateTable = (expression, variables) => {
   let tableHTML = `
     <div style="font-weight: 500; padding: 16px;">Truth Table:</div>
     <table align='center'><tr><th>min</th>${variables
@@ -92,16 +92,15 @@ function generateTable(expression, variables) {
 
   tableHTML += "</table>";
   return [tableHTML, minTerms, maxTerms];
-}
+};
 
-function substituteVariables(expression, variables, data) {
-  return variables.reduce(
+const substituteVariables = (expression, variables, data) =>
+  variables.reduce(
     (exp, v, idx) => exp.replace(new RegExp(v, "g"), data[idx]),
     expression
   );
-}
 
-function solve(equation) {
+const solve = (equation) => {
   while (equation.includes("(")) {
     const start = equation.lastIndexOf("(");
     const end = equation.indexOf(")", start);
@@ -124,25 +123,21 @@ function solve(equation) {
   } catch {
     return "";
   }
-}
+};
 
-function getMintermHTML(minTerms) {
-  return `
-    <div style="font-weight: 500">Sum of Minterms:</div>
-    <div style="margin-top: 10px;"><span>F</span> = &Sigma; (${minTerms.join(
-      ", "
-    )})</div>
-  `;
-}
+const getMintermHTML = (minTerms) => `
+  <div style="font-weight: 500">Sum of Minterms:</div>
+  <div style="margin-top: 10px;"><span>F</span> = &Sigma; (${minTerms.join(
+    ", "
+  )})</div>
+`;
 
-function getMaxtermHTML(maxTerms) {
-  return `
-    <div style="font-weight: 500">Product of Maxterms:</div>
-    <div style="margin-top: 10px;"><span>F</span> = &Pi; (${maxTerms.join(
-      ", "
-    )})</div>
-  `;
-}
+const getMaxtermHTML = (maxTerms) => `
+  <div style="font-weight: 500">Product of Maxterms:</div>
+  <div style="margin-top: 10px;"><span>F</span> = &Pi; (${maxTerms.join(
+    ", "
+  )})</div>
+`;
 
 const toggleButton = document.getElementById("dark-mode-toggle");
 toggleButton.addEventListener("click", () => {
@@ -153,7 +148,7 @@ toggleButton.addEventListener("click", () => {
   buildTable();
 });
 
-function generateKMap(minTerms, variables) {
+const generateKMap = (minTerms, variables) => {
   const numVars = variables.length;
   if (numVars < 2 || numVars > 4) {
     return `<p style="padding: 16px;">K-map generation is supported for 2 to 4 variables.</p>`;
@@ -233,4 +228,4 @@ function generateKMap(minTerms, variables) {
   kmapHTML += `</table>`;
 
   return kmapHTML;
-}
+};
