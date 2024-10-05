@@ -1,16 +1,13 @@
 function buildTable() {
-  // Get the placeholder element to display the truth table
   const placeholder = document.getElementById("table-placeholder");
   const mintermHTML = document.getElementById("minterms");
   const maxtermHTML = document.getElementById("maxterms");
 
-  // Get the input expression, trim whitespace, and convert to uppercase
   let expression = document
     .getElementById("function")
     .value.trim()
     .toUpperCase();
 
-  // If the input expression is empty, clear the placeholder and return
   if (!expression) {
     placeholder.innerHTML = "<div></div>";
     mintermHTML.innerHTML = "";
@@ -18,51 +15,51 @@ function buildTable() {
     return;
   }
 
-  // Check for invalid characters in the expression
   if (/[^A-Z01+'()^ ]/.test(expression)) {
     placeholder.innerHTML = "<p>One of the characters is not allowed.</p>";
     return;
   }
-
-  // Add closing parentheses if there are unmatched opening parentheses
-  while (
-    (expression.match(/\(/g) || []).length >
+  if (
+    (expression.match(/\(/g) || []).length !==
     (expression.match(/\)/g) || []).length
   ) {
-    expression += ")";
+    placeholder.innerHTML = "<p>Unmatched parentheses in the expression.</p>";
+    return;
   }
 
-  // Extract unique variables from the expression and sort them
+  if (/\(\s*\)/.test(expression)) {
+    placeholder.innerHTML = "<p>Empty parentheses are not allowed.</p>";
+    return;
+  }
+
   const variables = [...new Set(expression.match(/[A-Z]/g))].sort();
 
-  // Limit the number of variables to 10
   if (variables.length > 10) {
     placeholder.innerHTML = "<p>You can only have 10 variables at a time.</p>";
     return;
   }
 
-  // Start building the HTML for the truth table
-  let tableHTML = `<table align='center'><tr><th>minterm</th>${variables
+  let tableHTML = `<table align='center'><tr><th>min</th>${variables
     .map((v) => `<th>${v}</th>`)
     .join("")}<th style="font-style: italic">F</th></tr>`;
 
   let minTerms = [];
   let maxTerms = [];
 
-  // Generate rows for each possible combination of variable values
   for (let i = 0; i < Math.pow(2, variables.length); i++) {
-    // Calculate the binary values for each variable
     const data = variables.map((_, j) => (i >> (variables.length - j - 1)) & 1);
     let equation = expression;
 
-    // Replace variables in the expression with their corresponding values
     variables.forEach((v, idx) => {
       equation = equation.replace(new RegExp(v, "g"), data[idx]);
     });
 
-    const oddr = i % 2 === 1 ? 'style="background-color: #e9ecef;"' : '';
+    const isDarkMode = document.body.classList.contains("dark-mode");
+    const oddr =
+      i % 2 === 1
+        ? `style="background-color: ${isDarkMode ? "#444" : "#e9ecef"};"`
+        : "";
 
-    // Add the row to the table HTML
     let sol = solve(equation);
     tableHTML += `<tr ${oddr}><td style="letter-spacing: 0">${i}</td>${data
       .map((d) => `<td>${d}</td>`)
@@ -70,23 +67,27 @@ function buildTable() {
     sol == 1 ? minTerms.push(i) : maxTerms.push(i);
   }
 
-  // Close the table HTML
   tableHTML += "</table>";
-  mintermHTML.innerHTML = `Sum of Minterms<br><span>F</span> = &Sigma;<sub>m</sub>(${minTerms.join(
+  mintermHTML.innerHTML = `
+  <div style="font-weight: 500">Sum of Minterms:</div>
+  <div style="margin-top: 10px;"><span>F</span> = &Sigma; (${minTerms.join(
     ", "
-  )})`;
-  maxtermHTML.innerHTML = `Product of Maxterms<br><span>F</span> = &Pi;<sub>M</sub>(${maxTerms.join(
-    ", "
-  )})`;
+  )})</div>
+  `;
 
-  // Check if the table contains invalid cells and update the placeholder
+  maxtermHTML.innerHTML = `
+  <div style="font-weight: 500">Product of Maxterms:</div>
+  <div style="margin-top: 10px;"><span>F</span> = &Pi; (${maxTerms.join(
+    ", "
+  )})</div>
+  `;
+
   placeholder.innerHTML = tableHTML.includes("<td></td>")
     ? "<p>Invalid expression.</p>"
     : tableHTML;
 }
 
 function solve(equation) {
-  // Recursively solve expressions within parentheses
   while (equation.includes("(")) {
     const start = equation.lastIndexOf("(");
     const end = equation.indexOf(")", start);
@@ -96,19 +97,15 @@ function solve(equation) {
       equation.substring(end + 1);
   }
 
-  // Simplify double negations and replace negations of 0 and 1
   equation = equation
     .replace(/''/g, "")
     .replace(/0'/g, "1")
     .replace(/1'/g, "0");
 
-  // Add multiplication (*) between consecutive digits
   equation = equation.replace(/(\d)(?=\d)/g, "$1*");
 
-  // Replace XOR operator (^) with JavaScript XOR logic
   equation = equation.replace(/(\d)\^(\d)/g, "($1 ^ $2)");
 
-  // Evaluate the equation and return the result (1 or 0)
   try {
     const result = eval(equation);
     return result ? 1 : 0;
@@ -116,3 +113,14 @@ function solve(equation) {
     return "";
   }
 }
+
+const toggleButton = document.getElementById("dark-mode-toggle");
+const body = document.body;
+
+toggleButton.addEventListener("click", () => {
+  body.classList.toggle("dark-mode");
+  toggleButton.textContent = body.classList.contains("dark-mode")
+    ? "Light Mode"
+    : "Dark Mode";
+  buildTable();
+});
