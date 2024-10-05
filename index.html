@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Truth Table Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1 class="header-tile">Truth Table Generator</h1>
+      <h2 class="header-desc">
+        Allowed syntax for boolean functions:
+      </h2>
+      <div class="header-format">
+        <div>AND = <span class="formatted">AB</span></div>
+        <div>OR = <span class="formatted">A + B</span></div>
+        <div>XOR = <span class="formatted">A ^ B</span></div>
+        <div>NOT = <span class="formatted">A'</span></div>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="input-wrap">
+        <div class="input-prefix">F =</div>
+        <input id="function" oninput="buildTable()" placeholder="AB + AB'C + A'" type="text" autocomplete="off"
+          spellcheck="false" autofocus />
+      </div>
+      <div class="container">
+        <div id="table-placeholder"></div>
+        <div class="container-wrap">
+          <div id="minterms"></div>
+          <div id="maxterms"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>@ 2024, Joshua Payne</div>
+    </div>
+
+    <script src="app.js"></script>
+    <noscript>JavaScript not installed.</noscript>
+  </div>
+</body>
+
+</html>
