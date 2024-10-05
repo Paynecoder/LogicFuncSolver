@@ -200,4 +200,8 @@ td {
     font-size: 12px;
     text-align: center;
   }
+
+  .main-container {
+    min-height: 35vh;
+  }
 }
