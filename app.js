@@ -60,9 +60,11 @@ function buildTable() {
       equation = equation.replace(new RegExp(v, "g"), data[idx]);
     });
 
+    const oddr = i % 2 === 1 ? 'style="background-color: #e9ecef;"' : '';
+
     // Add the row to the table HTML
     let sol = solve(equation);
-    tableHTML += `<tr><td style="letter-spacing: 0">${i}</td>${data
+    tableHTML += `<tr ${oddr}><td style="letter-spacing: 0">${i}</td>${data
       .map((d) => `<td>${d}</td>`)
       .join("")}<td>${sol}</td></tr>`;
     sol == 1 ? minTerms.push(i) : maxTerms.push(i);
