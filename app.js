@@ -62,9 +62,7 @@ const generateTable = (expression, variables) => {
     <div style="font-weight: 500; padding: 16px;">Truth Table:</div>
     <table align='center'><tr><th>min</th>${variables
       .map((v) => `<th>${v}</th>`)
-      .join("")}<th style="font-style: italic">F(${variables
-    .map((v) => `${v}`)
-    .join("")})</th></tr>`;
+      .join("")}<th style="font-style: italic">${expression}</th></tr>`;
 
   let minTerms = [];
   let maxTerms = [];
