@@ -52,6 +52,11 @@ body {
   font-size: 15px;
 }
 
+.scrolltable {
+  overflow-y: auto;
+  max-height: 500px;
+}
+
 #function {
   font-family: "Fira Mono", monospace;
   padding: 1rem 1rem;
@@ -84,6 +89,13 @@ body {
 }
 
 .input-prefix {
+  font-weight: 600;
+  padding: 1rem 0.75rem;
+  font-style: italic;
+  font-size: 18px;
+}
+
+.input-suffix {
   font-weight: 600;
   padding: 1rem 0.75rem;
   font-style: italic;
