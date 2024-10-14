@@ -145,15 +145,17 @@ const solve = (equation) => {
 const getMintermHTML = (minTerms) => {
   const displayedTerms = minTerms.slice(0, 15);
   const hasMore = minTerms.length > 15;
-  const mintermDivId = 'minterm-display';
+  const mintermDivId = "minterm-display";
 
   const moreSpan = hasMore
     ? `<span id="minterm-ellipsis" style="text-decoration: underline; cursor: pointer;">...</span>`
-    : '';
+    : "";
   return `
     <div style="font-weight: 500">Sum of Minterms:</div>
     <div id="${mintermDivId}" style="margin-top: 10px;">
-      <span>F</span> = &Sigma; (${displayedTerms.join(", ")}${hasMore ? ', ' : ''}${moreSpan})
+      <span>F</span> = &Sigma; (${displayedTerms.join(", ")}${
+    hasMore ? ", " : ""
+  }${moreSpan})
     </div>
   `;
 };
@@ -161,32 +163,35 @@ const getMintermHTML = (minTerms) => {
 const getMaxtermHTML = (maxTerms) => {
   const displayedTerms = maxTerms.slice(0, 15);
   const hasMore = maxTerms.length > 15;
-  const maxtermDivId = 'maxterm-display';
+  const maxtermDivId = "maxterm-display";
 
   const moreSpan = hasMore
     ? `<span id="maxterm-ellipsis" style="text-decoration: underline; cursor: pointer;">...</span>`
-    : '';
+    : "";
   return `
     <div style="font-weight: 500">Product of Maxterms:</div>
     <div id="${maxtermDivId}" style="margin-top: 10px;">
-      <span>F</span> = &Pi; (${displayedTerms.join(", ")}${hasMore ? ', ' : ''}${moreSpan})
+      <span>F</span> = &Pi; (${displayedTerms.join(", ")}${
+    hasMore ? ", " : ""
+  }${moreSpan})
     </div>
   `;
 };
 
-
 const attachEllipsisListeners = (minTerms, maxTerms) => {
-  const mintermEllipsis = document.getElementById('minterm-ellipsis');
+  const mintermEllipsis = document.getElementById("minterm-ellipsis");
   if (mintermEllipsis) {
-    mintermEllipsis.addEventListener('click', function() {
-      const mintermDiv = document.getElementById('minterm-display');
-      mintermDiv.innerHTML = `<span>F</span> = &Sigma; (${minTerms.join(", ")})`;
+    mintermEllipsis.addEventListener("click", function () {
+      const mintermDiv = document.getElementById("minterm-display");
+      mintermDiv.innerHTML = `<span>F</span> = &Sigma; (${minTerms.join(
+        ", "
+      )})`;
     });
   }
-  const maxtermEllipsis = document.getElementById('maxterm-ellipsis');
+  const maxtermEllipsis = document.getElementById("maxterm-ellipsis");
   if (maxtermEllipsis) {
-    maxtermEllipsis.addEventListener('click', function() {
-      const maxtermDiv = document.getElementById('maxterm-display');
+    maxtermEllipsis.addEventListener("click", function () {
+      const maxtermDiv = document.getElementById("maxterm-display");
       maxtermDiv.innerHTML = `<span>F</span> = &Pi; (${maxTerms.join(", ")})`;
     });
   }
@@ -488,6 +493,6 @@ const generateSOP = (minterms, variables) => {
     primeImplicants,
     variables
   );
-  let sopHTML = `<div> = ${minimizedExpression}</div>`;
+  let sopHTML = `<div> = ${minimizedExpression.replace(/([A-Za-z])'/g, '<span class="overlined">$1</span>')}</div>`;
   return sopHTML;
 };
