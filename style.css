@@ -106,7 +106,6 @@ body {
 #maxterms {
   padding: 1rem;
   font-weight: 400;
-  max-width: 500px;
 }
 
 #minterms span,

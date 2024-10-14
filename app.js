@@ -22,7 +22,7 @@ const buildTable = () => {
 
   if (!isValidExpression(expressionInput)) {
     placeholder.innerHTML =
-      "<p>Invalid characters or unmatched parentheses in the expression.</p>";
+      `<p style="font-weight: 500;">Invalid characters or unmatched parentheses in the expression.</p>`;
     mintermHTML.innerHTML = "";
     maxtermHTML.innerHTML = "";
     kmapPlaceholder.innerHTML = "";
@@ -31,8 +31,12 @@ const buildTable = () => {
   }
 
   const variables = [...new Set(expressionInput.match(/[A-Z]/g))].sort();
-  if (variables.length > 10) {
-    placeholder.innerHTML = "<p>You can only have 10 variables at a time.</p>";
+  if (variables.length > 8) {
+    placeholder.innerHTML = `<p style="font-weight: 500;">You can only have 8 variables at a time.</p>`;
+    mintermHTML.innerHTML = "";
+    maxtermHTML.innerHTML = "";
+    kmapPlaceholder.innerHTML = "";
+    sopPlaceholder.innerHTML = "";
     return;
   }
 
@@ -41,7 +45,7 @@ const buildTable = () => {
     variables
   );
 
-  placeholder.innerHTML = tableHTML || "<p>Invalid expression.</p>";
+  placeholder.innerHTML = tableHTML || `<p style="font-weight: 500;">Invalid expression.</p>`;
   mintermHTML.innerHTML = getMintermHTML(minTerms);
   maxtermHTML.innerHTML = getMaxtermHTML(maxTerms);
   kmapPlaceholder.innerHTML = generateKMap(minTerms, variables);
@@ -209,7 +213,7 @@ toggleButton.addEventListener("click", () => {
 const generateKMap = (minTerms, variables) => {
   const numVars = variables.length;
   if (numVars < 2 || numVars > 4) {
-    return `<p style="padding: 16px;">K-map generation is supported for 2 to 4 variables.</p>`;
+    return `<p style="padding: 16px; font-weight: 500;">K-map generation is supported for 2 to 4 variables.</p>`;
   }
 
   let rowVars = [];
@@ -290,7 +294,7 @@ const generateKMap = (minTerms, variables) => {
 
 const generateSOP = (minterms, variables) => {
   const numVars = variables.length;
-  if (numVars < 2 || numVars > 4) {
+  if (numVars < 2) {
     return ``;
   }
   function getBinaryMinterms(minterms, numVariables) {
