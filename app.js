@@ -212,14 +212,16 @@ toggleButton.addEventListener("click", () => {
 
 const generateKMap = (minTerms, variables) => {
   const numVars = variables.length;
-  if (numVars < 2 || numVars > 4) {
-    return `<p style="padding: 16px; font-weight: 500;">K-map generation is supported for 2 to 4 variables.</p>`;
+  if (numVars < 2 || numVars > 6) {
+    return `<p style="padding: 16px; font-weight: 500;">K-map generation is supported for 2 to 6 variables.</p>`;
   }
 
   let rowVars = [];
   let colVars = [];
   let rowLabels = [];
   let colLabels = [];
+  let planeVars = [];
+  let planeLabels = [];
   let kmapMinterms = [];
 
   if (numVars == 2) {
@@ -251,46 +253,173 @@ const generateKMap = (minTerms, variables) => {
       [12, 13, 15, 14],
       [8, 9, 11, 10],
     ];
+  } else if (numVars == 5) {
+    rowVars = [variables[0], variables[1]];
+    colVars = [variables[2], variables[3]];
+    planeVars = [variables[4]];
+    rowLabels = ["00", "01", "11", "10"];
+    colLabels = ["00", "01", "11", "10"];
+    planeLabels = ["0", "1"];
+
+    const baseKmap = [
+      [0, 1, 3, 2],
+      [4, 5, 7, 6],
+      [12, 13, 15, 14],
+      [8, 9, 11, 10],
+    ];
+
+    const kmap0 = baseKmap;
+    const kmap1 = baseKmap.map((row) => row.map((cell) => cell + 16));
+    kmapMinterms = [kmap0, kmap1];
+  } else if (numVars == 6) {
+    rowVars = [variables[0], variables[1]];
+    colVars = [variables[2], variables[3]];
+    planeVars = [variables[4], variables[5]];
+    rowLabels = ["00", "01", "11", "10"];
+    colLabels = ["00", "01", "11", "10"];
+    planeLabels = ["00", "01", "11", "10"];
+
+    const baseKmap = [
+      [0, 1, 3, 2],
+      [4, 5, 7, 6],
+      [12, 13, 15, 14],
+      [8, 9, 11, 10],
+    ];
+
+    const planeOffsets = [0, 16, 48, 32]; // Gray code order
+    const kmapPlanes = planeOffsets.map((offset) =>
+      baseKmap.map((row) => row.map((cell) => cell + offset))
+    );
+    kmapMinterms = kmapPlanes;
   }
 
   let kmapHTML = `
-    <div style="font-weight: 500; padding: 16px;">Karnaugh Map:</div>
-    <table>`;
+    <div style="font-weight: 500; padding: 16px;">Karnaugh Map:</div>`;
 
-  kmapHTML += `<tr><th rowspan="2" colspan="2"></th><th colspan="${
-    colLabels.length
-  }">${colVars.join("")}</th></tr>`;
-
-  kmapHTML += `<tr>`;
-  for (let j = 0; j < colLabels.length; j++) {
-    kmapHTML += `<th>${colLabels[j]}</th>`;
-  }
-  kmapHTML += `</tr>`;
-
-  for (let i = 0; i < rowLabels.length; i++) {
-    if (i === 0) {
-      kmapHTML += `<tr><th rowspan="${rowLabels.length}">${rowVars.join(
-        ""
-      )}</th><th>${rowLabels[i]}</th>`;
-    } else {
-      kmapHTML += `<tr><th>${rowLabels[i]}</th>`;
-    }
+  if (numVars <= 4) {
+    kmapHTML += `<table>`;
+    kmapHTML += `<tr><th rowspan="2" colspan="2"></th><th colspan="${
+      colLabels.length
+    }">${colVars.join("")}</th></tr>`;
+    kmapHTML += `<tr>`;
     for (let j = 0; j < colLabels.length; j++) {
-      const mintermIndex = kmapMinterms[i][j];
-      const value = minTerms.includes(mintermIndex) ? 1 : 0;
-      const isDarkMode = document.body.classList.contains("dark-mode");
-      const cellStyle =
-        value === 1
-          ? `style="background-color: ${isDarkMode ? "#444" : "#e9ecef"};"`
-          : "";
-      kmapHTML += `<td ${cellStyle}>${value}</td>`;
+      kmapHTML += `<th>${colLabels[j]}</th>`;
     }
     kmapHTML += `</tr>`;
+
+    for (let i = 0; i < rowLabels.length; i++) {
+      if (i === 0) {
+        kmapHTML += `<tr><th rowspan="${rowLabels.length}">${rowVars.join(
+          ""
+        )}</th><th>${rowLabels[i]}</th>`;
+      } else {
+        kmapHTML += `<tr><th>${rowLabels[i]}</th>`;
+      }
+      for (let j = 0; j < colLabels.length; j++) {
+        const mintermIndex = kmapMinterms[i][j];
+        const value = minTerms.includes(mintermIndex) ? 1 : 0;
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        const cellStyle =
+          value === 1
+            ? `style="background-color: ${isDarkMode ? "#444" : "#e9ecef"};"`
+            : "";
+        kmapHTML += `<td ${cellStyle}>${value}</td>`;
+      }
+      kmapHTML += `</tr>`;
+    }
+    kmapHTML += `</table>`;
+  } else if (numVars == 5) {
+    for (let p = 0; p < kmapMinterms.length; p++) {
+      const planeLabel = planeLabels[p];
+      kmapHTML += `<div style="display: inline-block; margin-right: 20px;">`;
+      kmapHTML += `<div style="font-weight: 500; padding: 8px;">${planeVars.join(
+        ""
+      )} = ${planeLabel}</div>`;
+      kmapHTML += `<table>`;
+      kmapHTML += `<tr><th rowspan="2" colspan="2"></th><th colspan="${
+        colLabels.length
+      }">${colVars.join("")}</th></tr>`;
+      kmapHTML += `<tr>`;
+      for (let j = 0; j < colLabels.length; j++) {
+        kmapHTML += `<th>${colLabels[j]}</th>`;
+      }
+      kmapHTML += `</tr>`;
+
+      for (let i = 0; i < rowLabels.length; i++) {
+        if (i === 0) {
+          kmapHTML += `<tr><th rowspan="${rowLabels.length}">${rowVars.join(
+            ""
+          )}</th><th>${rowLabels[i]}</th>`;
+        } else {
+          kmapHTML += `<tr><th>${rowLabels[i]}</th>`;
+        }
+        for (let j = 0; j < colLabels.length; j++) {
+          const mintermIndex = kmapMinterms[p][i][j];
+          const value = minTerms.includes(mintermIndex) ? 1 : 0;
+          const isDarkMode = document.body.classList.contains("dark-mode");
+          const cellStyle =
+            value === 1
+              ? `style="background-color: ${isDarkMode ? "#444" : "#e9ecef"};"`
+              : "";
+          kmapHTML += `<td ${cellStyle}>${value}</td>`;
+        }
+        kmapHTML += `</tr>`;
+      }
+      kmapHTML += `</table>`;
+      kmapHTML += `</div>`;
+    }
+  } else if (numVars == 6) {
+    kmapHTML += `<table>`;
+    for (let pRow = 0; pRow < 2; pRow++) {
+      kmapHTML += `<tr>`;
+      for (let pCol = 0; pCol < 2; pCol++) {
+        const pIndex = pRow * 2 + pCol;
+        const planeLabel = planeLabels[pIndex];
+        kmapHTML += `<td style="vertical-align: top;">`;
+        kmapHTML += `<div style="font-weight: 500; padding: 8px;">${planeVars.join(
+          ""
+        )} = ${planeLabel}</div>`;
+        kmapHTML += `<table>`;
+        kmapHTML += `<tr><th rowspan="2" colspan="2"></th><th colspan="${
+          colLabels.length
+        }">${colVars.join("")}</th></tr>`;
+        kmapHTML += `<tr>`;
+        for (let j = 0; j < colLabels.length; j++) {
+          kmapHTML += `<th>${colLabels[j]}</th>`;
+        }
+        kmapHTML += `</tr>`;
+
+        for (let i = 0; i < rowLabels.length; i++) {
+          if (i === 0) {
+            kmapHTML += `<tr><th rowspan="${rowLabels.length}">${rowVars.join(
+              ""
+            )}</th><th>${rowLabels[i]}</th>`;
+          } else {
+            kmapHTML += `<tr><th>${rowLabels[i]}</th>`;
+          }
+          for (let j = 0; j < colLabels.length; j++) {
+            const mintermIndex = kmapMinterms[pIndex][i][j];
+            const value = minTerms.includes(mintermIndex) ? 1 : 0;
+            const isDarkMode = document.body.classList.contains("dark-mode");
+            const cellStyle =
+              value === 1
+                ? `style="background-color: ${isDarkMode ? "#444" : "#e9ecef"};"`
+                : "";
+            kmapHTML += `<td ${cellStyle}>${value}</td>`;
+          }
+          kmapHTML += `</tr>`;
+        }
+        kmapHTML += `</table>`;
+        kmapHTML += `</td>`;
+      }
+      kmapHTML += `</tr>`;
+    }
+    kmapHTML += `</table>`;
   }
-  kmapHTML += `</table>`;
 
   return kmapHTML;
 };
+
 
 const generateSOP = (minterms, variables) => {
   const numVars = variables.length;
